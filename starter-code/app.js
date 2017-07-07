@@ -5,7 +5,7 @@ const cookieParser   = require("cookie-parser");
 const bodyParser     = require("body-parser");
 const mongoose       = require("mongoose");
 const app            = express();
-const expressLayouts = require('express-ejs-layouts');
+// const expressLayouts = require('express-ejs-layouts');
 
 
 // Controllers
@@ -25,8 +25,8 @@ app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 
 // ...other code
-app.use(expressLayouts);
-app.set("layout", "main-layout");
+// app.use(expressLayouts);
+// app.set("layout", "main-layout");
 
 // Access POST params with body parser
 app.use(bodyParser.json());
@@ -36,9 +36,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // Routes
-// app.use('/', index);
+app.use('/', index);
 app.use('/signup', authRoutes);
 app.use('/user', user);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
