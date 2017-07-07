@@ -1,22 +1,19 @@
 const express = require("express");
 const authController = express.Router();
-
-// User model
-const User = require("../models/User");
-
-// Bcrypt to encrypt passwords
-const bcrypt = require("bcrypt");
+const User = require("../models/User");  // User model
+const bcrypt = require("bcrypt"); // Bcrypt to encrypt passwords
 const bcryptSalt = 10;
 
 // Show the form
-authController.get("/", (req, res, next) => {
+authController.get("/signup", (req, res, next) => {
   res.render("signup");
 });
 
 // info from the form
-authController.post("/", (req, res, next) => {
+authController.post("/signup", (req, res, next) => {
   var username = req.body.username;
   var password = req.body.password;
+  console.lo(req.session);
   console.log(req.body);
   if (username === "" || password === "") {
     res.render("signup", {
@@ -55,5 +52,51 @@ authController.post("/", (req, res, next) => {
     });
   });
 });
+
+// Show the LOGIN form
+authController.get("/login", (req, res, next) => {
+  res.render("login");
+});
+
+// info from the form
+authController.post("/login", (req, res, next) => {
+
+  console.log(req.body);
+  var username = req.body.username;
+  var password = req.body.password;
+
+  if (username === "" || password === "") {
+    res.render("auth/login", {
+      errorMessage: "Indicate a username and a password to sign up"
+    });
+    return;
+  }
+
+  User.findOne({ "username": username }, "_id username password following", (err, user) => {
+    console.log('USER',user);
+    if(err || !user){
+       res.render('auth/login',{errorMessage : "The username doesn't exist"
+     });
+      return;
+    }else{
+      if(bcrypt.compareSync(password, user.password)){
+        console.log('equalsssss');
+        req.session.currentUser = user;
+        // res.redirect("/");
+      }else{
+        res.render("auth/login",{
+          errorMessage: "Password incorrect"
+        });
+      }
+    }
+
+
+
+    });
+});
+
+
+
+
 
 module.exports = authController;

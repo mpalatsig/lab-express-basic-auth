@@ -5,6 +5,8 @@ const cookieParser   = require("cookie-parser");
 const bodyParser     = require("body-parser");
 const mongoose       = require("mongoose");
 const app            = express();
+const session = require("express-session");
+const MongoStore = require("connect-mongo")(session);
 // const expressLayouts = require('express-ejs-layouts');
 
 
@@ -37,7 +39,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/', index);
-app.use('/signup', authRoutes);
+app.use('/auth', authRoutes);
 app.use('/user', user);
 
 
