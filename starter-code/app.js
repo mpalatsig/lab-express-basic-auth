@@ -1,10 +1,11 @@
-const express        = require("express");
-const path           = require("path");
-const logger         = require("morgan");
-const cookieParser   = require("cookie-parser");
-const bodyParser     = require("body-parser");
-const mongoose       = require("mongoose");
-const app            = express();
+const express = require("express");
+const path = require("path");
+const logger = require("morgan");
+const cookieParser = require("cookie-parser");
+const favicon = require('serve-favicon');
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const app = express();
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 // const expressLayouts = require('express-ejs-layouts');
@@ -30,12 +31,27 @@ app.use(express.static(path.join(__dirname, "public")));
 // app.use(expressLayouts);
 // app.set("layout", "main-layout");
 
-// Access POST params with body parser
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+// IMPORTANT Create new session and cookie
+app.use(session({
+  secret: "mysecretauth",
+  cookie: { maxAge: 60000 },
+  store: new MongoStore({
+    mongooseConnection: mongoose.connection,
+    ttl: 24 * 60 * 60 // 1 day
+  })
+}));
 
 // Authentication
+app.use(logger('dev'));
 app.use(cookieParser());
+
+
+// Access POST params with body parser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
+
 
 // Routes
 app.use('/', index);

@@ -13,7 +13,7 @@ authController.get("/signup", (req, res, next) => {
 authController.post("/signup", (req, res, next) => {
   var username = req.body.username;
   var password = req.body.password;
-  console.lo(req.session);
+  console.log(req.session);
   console.log(req.body);
   if (username === "" || password === "") {
     res.render("signup", {
@@ -66,7 +66,7 @@ authController.post("/login", (req, res, next) => {
   var password = req.body.password;
 
   if (username === "" || password === "") {
-    res.render("auth/login", {
+    res.render("login", {
       errorMessage: "Indicate a username and a password to sign up"
     });
     return;
@@ -75,17 +75,17 @@ authController.post("/login", (req, res, next) => {
   User.findOne({ "username": username }, "_id username password following", (err, user) => {
     console.log('USER',user);
     if(err || !user){
-       res.render('auth/login',{errorMessage : "The username doesn't exist"
+       res.render('login',{errorMessage : "The username doesn't exist"
      });
       return;
     }else{
       if(bcrypt.compareSync(password, user.password)){
         console.log('equalsssss');
         req.session.currentUser = user;
-        // res.redirect("/");
+        return res.redirect("/");
       }else{
-        res.render("auth/login",{
-          errorMessage: "Password incorrect"
+        res.render("login",{
+          errorMessage: "Wrong Password"
         });
       }
     }
@@ -94,9 +94,6 @@ authController.post("/login", (req, res, next) => {
 
     });
 });
-
-
-
 
 
 module.exports = authController;
